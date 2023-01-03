@@ -7,10 +7,18 @@ class ArticleImageSerializer(serializers.HyperlinkedModelSerializer):
         fields = ['image']
     
 class ArticleSerializer(serializers.ModelSerializer):
-    image = ArticleImageSerializer(many=True)
+    image = ArticleImageSerializer(many=True, read_only=True)
+
     class Meta:
         model = Article
-        fields = ['writer' ,'content', 'image']
+        fields = ['content', 'image']
+
+    def create(self, validated_data):
+        article = Article.objects.create(**validated_data)
+        image_data = self.context.get('request').FILES
+        for image_data in image_data.getlist('image'):
+            Image.objects.create(article=article, image=image_data)
+        return article
 
 class ArticleUpdateSerializer(serializers.ModelSerializer):
     class Meta:

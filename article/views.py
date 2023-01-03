@@ -4,8 +4,9 @@ from rest_framework.response import Response
 from rest_framework import status
 from rest_framework.decorators import api_view
 from rest_framework.views import APIView
-from rest_framework import generics
+from rest_framework import viewsets
 
+# 게시글 CRUD
 class ArticleView(APIView):
     def get(self, request, **kwargs):
         if kwargs.get('article_id') is None:
@@ -18,7 +19,7 @@ class ArticleView(APIView):
         return Response(article_serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, format=None):
-        article_serializer = ArticleSerializer(data = request.data)
+        article_serializer = ArticleSerializer(data = request.data, context={'request':request})
         if article_serializer.is_valid():
             article_serializer.save(writer=self.request.user)
             return Response(status=status.HTTP_204_NO_CONTENT)
@@ -42,74 +43,3 @@ class ArticleView(APIView):
         article_object = Article.objects.get(id = kwargs.get('article_id'))
         article_object.delete()
         return Response('delete', status=status.HTTP_200_OK)
-
-# 게시글 리스트.
-# @api_view(['GET'])
-# def articleList(request):
-#     article = Article.objects.all()
-#     serializer = ArticleSerializer(article, many=True)
-
-#     return Response(serializer.data)
-
-# # 게시글 생성.
-# @api_view(['POST'])
-# def articleCreate(request):
-#     serializer = ArticleSerializer(data=request.data)
-
-#     if serializer.is_valid():
-#         serializer.save(writer=request.user)
-    
-#     article = Article.objects.all()
-#     serializer = ArticleSerializer(article, many=True)
-
-#     return Response(status=status.HTTP_204_NO_CONTENT)
-
-# # 게시글 수정.
-# @api_view(['PUT'])
-# def articleUpdate(request, pk):
-#     article = Article.objects.get(id=pk)
-#     serializer = ArticleSerializer(instance=article, data=request.data)
-
-#     if serializer.is_valid():
-#         serializer.save()
-    
-
-#     article = Article.objects.all()
-#     serializer = ArticleSerializer(article, many=True)
-
-#     return Response(status=status.HTTP_204_NO_CONTENT)
-
-# # 게시글 삭제
-# @api_view(['DELETE'])
-# def articleDelete(request, pk):
-#     article = Article.objects.get(id=pk)
-
-#     if article:
-#         article.delete()
-
-#     return Response(status=status.HTTP_204_NO_CONTENT)
-
-# # 게시글 상세.
-# @api_view(['GET'])
-# def articleDetail(request, pk):
-#     article = Article.objects.get(id=pk)
-#     serializer = ArticleSerializer(article, many=False)
-
-#     return Response(serializer.data)
-
-# -----------------------------------------------------------
-# class ArticleView(generics.ListCreateAPIView):
-#     queryset = Article.objects.order_by('created_at').all()
-#     serializer_class = ArticleSerializer
-
-#     def list(self, request):
-#         queryset = self.get_queryset()
-#         serializer = ArticleSerializer(queryset, many=True)
-
-#         return Response(serializer.data)
-
-# class ArticleDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     serializer_class = ArticleSerializer
-
-#     def get_object(self):
-#         return Article.objects.get(id=self.kwargs['pk'])
