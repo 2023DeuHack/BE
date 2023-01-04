@@ -2,22 +2,38 @@ from django.shortcuts import render
 from rest_framework.decorators import api_view
 from django.shortcuts import get_object_or_404
 from article.models import Article
-from .serializer import CommentSerializer
+from .serializer import CommentReadingSerializer, CommentCreationSerializer
 from rest_framework import status
 from rest_framework.response import Response
+from rest_framework.views import APIView
+from .models import Comment
 
-# Create your views here.
-@api_view(['GET','POST'])
-def comment_list_create(request,article_id):
-    article = get_object_or_404(Article,pk=article_id)
+class CommentView(APIView):
+    def get(self, request, **kwargs):
+        if kwargs.get('article_id') is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        article_id = kwargs.get('article_id')
+        # article = Article.objects.get(article_id=article_id)
+        comment_object = Comment.objects.filter(article=article_id)
+        comment_serializer = CommentReadingSerializer(comment_object, many=True)
+        return Response(comment_serializer.data, status=status.HTTP_200_OK)
 
-    if request.method=="POST":
-        serializer = CommentSerializer(data=request.data) #1
-        if serializer.is_valid(raise_exception=True): #2
-            serializer.save(article=article) 
-        return Response(serializer.data,status=status.HTTP_201_CREATED)
+    def post(self, request, **kwargs):
+        if kwargs.get('article_id') is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        article_id=kwargs.get('article_id')
+        # article = Article.objects.get(article_id=article_id)
+        comment_serializer = CommentCreationSerializer(data=request.data)
+        if comment_serializer.is_valid():
+            comment_serializer.save(article_id=article_id)
+            # , writer=request.user
+            return Response(status=status.HTTP_201_CREATED)
 
-    elif request.method=='GET':
-        comments = article.comment_set.all()
-        serializer=CommentSerializer(comments,many=True)
-        return Response(serializer.data)
+    def delete(self, request, **kwargs):
+        if kwargs.get('comment_id') is None:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+        comment_id = kwargs.get('comment_id')
+        article_id = kwargs.get('article_id')
+        comment_object = Comment.objects.filter(article=article_id, comment_id=comment_id)
+        comment_object.delete()
+        return Response(status=status.HTTP_204_NO_CONTENT)

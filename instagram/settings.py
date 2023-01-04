@@ -48,6 +48,7 @@ INSTALLED_APPS = [
     "django_rename_app",
     "rest_framework",
     "article",
+    "comment",
 ]
 
 MIDDLEWARE = [
