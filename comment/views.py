@@ -10,18 +10,20 @@ from .models import Comment
 
 class CommentView(APIView):
     def get(self, request, **kwargs):
+        # 댓글 조회
         if kwargs.get('comment_id') is None:
             article_id = kwargs.get('article_id')
             comment_object = Comment.objects.filter(article_id=article_id, parent_id=None)
             comment_serializer = CommentReadingSerializer(comment_object, many=True)
             return Response(comment_serializer.data, status=status.HTTP_200_OK)
-
+        # 대댓글 조회
         parent_id = kwargs.get('comment_id')
         comment_object = Comment.objects.filter(parent_id=parent_id)
         comment_serializer = CommentReadingSerializer(comment_object, many=True)
         return Response(comment_serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request, **kwargs):
+        # 댓글 생성
         if kwargs.get('comment_id') is None:
             article_id=kwargs.get('article_id')
             article = Article.objects.get(article_id=article_id)
@@ -30,7 +32,7 @@ class CommentView(APIView):
                 comment_serializer.save(article_id=article)
             # , writer=request.user
                 return Response(status=status.HTTP_201_CREATED)
-
+        # 대댓글 생성
         article_id=kwargs.get('article_id')
         parent_id=kwargs.get('comment_id')
         article = Article.objects.get(article_id=article_id)
@@ -42,6 +44,7 @@ class CommentView(APIView):
             return Response(status=status.HTTP_201_CREATED)
 
     def delete(self, request, **kwargs):
+        # 댓글, 대댓글 삭제
         if kwargs.get('comment_id') is None:
             return Response(status=status.HTTP_400_BAD_REQUEST)
         comment_id = kwargs.get('comment_id')
