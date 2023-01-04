@@ -10,7 +10,6 @@ class ArticleImageSerializer(serializers.HyperlinkedModelSerializer):
 # GET
 class ArticleReadingSerializer(serializers.ModelSerializer):
     image = ArticleImageSerializer(many=True, read_only=True)
-    comment = CommentReadingSerializer
 
     class Meta:
         model = Article

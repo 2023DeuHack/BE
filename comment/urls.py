@@ -5,7 +5,7 @@ from rest_framework import routers
 
 
 urlpatterns = [
-    path('<int:article_id>',views.CommentView.as_view()),
+    path('<int:article_id>/',views.CommentView.as_view()),
     path('<int:article_id>/<int:comment_id>/',views.CommentView.as_view()),
+
 ]
-#   get post del 같게
