@@ -1,6 +1,5 @@
 from django.contrib.auth.models import User
 from django.db import models
-from django.contrib import admin
 
 # 게시물
 class Article(models.Model):
@@ -19,10 +18,3 @@ class Image(models.Model):
 
     class Meta:
         db_table = 'image'
-
-# class User_article_like(models.Model):
-#     user_id = models.ForeignKey(User, related_name='user_article_like', on_delete=models.CASCADE, null=False)
-#     article_id = models.ForeignKey(Article, related_name='user_article_like', on_delete=models.CASCADE)
-
-#     class Meta:
-#         db_table = 'user_article_like'

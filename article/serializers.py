@@ -22,5 +22,5 @@ class ArticleSerializer(serializers.ModelSerializer):
 
 class ArticleUpdateSerializer(serializers.ModelSerializer):
     class Meta:
-        models = Article
+        model = Article
         fields = ['content']
