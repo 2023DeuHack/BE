@@ -13,7 +13,7 @@ class ArticleReadingSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Article
-        fields = ['article_id', 'writer','content', 'image', 'location']
+        fields = ['article_id', 'writer_id','content', 'image', 'location', 'created_at']
 
 # POST
 class ArticleCreationSerializer(serializers.ModelSerializer):
@@ -27,11 +27,11 @@ class ArticleCreationSerializer(serializers.ModelSerializer):
         article = Article.objects.create(**validated_data)
         image_data = self.context.get('request').FILES
         for image_data in image_data.getlist('image'):
-            Image.objects.create(article=article, image=image_data)
+            Image.objects.create(article_id=article, image=image_data)
         return article
 
 # PUT
 class ArticleUpdateSerializer(serializers.ModelSerializer):
     class Meta:
         model = Article
-        fields = ['content', 'location']
+        fields = ['content']

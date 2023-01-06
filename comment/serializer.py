@@ -6,7 +6,7 @@ from .models import Comment
 class CommentReadingSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
-        fields = ['comment_id', 'writer','content','created_at']
+        fields = ['comment_id', 'writer_id','content','created_at']
 
 # POST
 class CommentCreationSerializer(serializers.ModelSerializer):
